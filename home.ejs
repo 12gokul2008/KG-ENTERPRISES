@@ -1,0 +1,461 @@
+<%- include('partials/head') %>
+
+<!-- Hero Section -->
+<section class="hero-section">
+  <div class="container hero-container">
+    <div class="hero-text">
+      <div class="badge">Trusted Manufacturer &amp; Fabricator</div>
+      <h1 class="hero-title">Elevate Your Living Space with <%= biz.name %></h1>
+      <p class="hero-desc">
+        Crafted with precision, durability, and elegance. Backed by <strong><%= biz.years %> years</strong> of hands-on expertise led by <strong><%= biz.owner %></strong>.
+        Weather-resistant, soundproof, and energy-efficient UPVC windows and doors.
+      </p>
+      <div class="hero-actions">
+        <a href="#calculator" class="btn btn-primary btn-lg">Calculate Instant Price</a>
+        <a href="tel:<%= biz.phone %>" class="btn btn-secondary btn-lg">Call <%= biz.phone %></a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <strong><%= biz.years %></strong>
+          <span>Experience</span>
+        </div>
+        <div class="stat-item">
+          <strong>100%</strong>
+          <span>Custom Fit</span>
+        </div>
+        <div class="stat-item">
+          <strong>₹ Best</strong>
+          <span>Direct Rates</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Services / Products Section -->
+<section id="services" class="section section-services">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">What We Offer</span>
+      <h2>Our Precision UPVC Products</h2>
+      <p>Engineered for strength, aesthetics, and maximum thermal insulation.</p>
+    </div>
+
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="service-icon">🪟</div>
+        <h3>Sliding Windows</h3>
+        <p>Smooth, effortless sliding mechanisms with multi-point locking. Ideal for balconies and space-saving modern rooms.</p>
+        <span class="service-badge">From ₹350 / sq.ft</span>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">🚪</div>
+        <h3>Openable Windows (Casement)</h3>
+        <p>Classic casement design offering 100% opening space for maximum air circulation and superior acoustic sealing.</p>
+        <span class="service-badge">From ₹400 / sq.ft</span>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">💨</div>
+        <h3>VL (Ventilators)</h3>
+        <p>Top-hung and louvered ventilator options for restrooms, kitchens, and utility spaces with provision for exhaust fans.</p>
+        <span class="service-badge">₹1,500 / piece</span>
+      </div>
+      <div class="service-card">
+        <div class="service-icon">🖼️</div>
+        <h3>FX (Fixed Windows)</h3>
+        <p>Panoramic fixed glass frames providing uninterrupted views, natural lighting, and supreme insulation.</p>
+        <span class="service-badge">From ₹300 / sq.ft</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Price List Section -->
+<section id="pricing" class="section section-pricing">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Transparent Pricing</span>
+      <h2>Official Price List (Indian Rupees)</h2>
+      <p>Direct fabricator rates managed directly in database.</p>
+    </div>
+
+    <div class="table-container card">
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Product Name</th>
+            <th>Pricing Method</th>
+            <th>Rate</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% products.forEach((p, index) => { %>
+            <tr>
+              <td><%= index + 1 %></td>
+              <td><strong><%= p.name %></strong></td>
+              <td>
+                <span class="pricing-pill <%= p.pricing_type === 'sqft' ? 'pill-sqft' : 'pill-piece' %>">
+                  <%= p.pricing_type === 'sqft' ? 'per sq.ft' : 'per piece' %>
+                </span>
+              </td>
+              <td class="rate-cell">Rs. <%= p.rate %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+      <div class="table-footnote">
+        * Note: Final quote includes precision fabrication and custom sizing. Rates are subject to project specifications.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Price Calculator (Section 3) -->
+<section id="calculator" class="section section-calculator">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">Interactive Estimator</span>
+      <h2>UPVC Price Calculator</h2>
+      <p>Select products, add multiple items, and compute your server-verified estimate instantly.</p>
+    </div>
+
+    <div class="calc-grid">
+      <!-- Item Input Card -->
+      <div class="card calc-entry-card">
+        <h3>Add Window / Door Item</h3>
+        <form id="calcItemForm" class="calc-form">
+          <label class="form-group">
+            <span>Select Product</span>
+            <select id="calcProduct" required>
+              <% products.forEach(p => { %>
+                <option value="<%= p.id %>" data-type="<%= p.pricing_type %>" data-rate="<%= p.rate %>" data-name="<%= p.name %>">
+                  <%= p.name %> (<%= p.pricing_type === 'sqft' ? '₹' + p.rate + '/sq.ft' : '₹' + p.rate + '/pc' %>)
+                </option>
+              <% }) %>
+            </select>
+          </label>
+
+          <div id="dimFields" class="dim-row">
+            <label class="form-group">
+              <span>Width (in feet)</span>
+              <input type="number" id="calcWidth" step="0.1" min="0.5" max="30" value="4" required>
+              <small class="hint">0.5 to 30 ft</small>
+            </label>
+            <label class="form-group">
+              <span>Height (in feet)</span>
+              <input type="number" id="calcHeight" step="0.1" min="0.5" max="30" value="5" required>
+              <small class="hint">0.5 to 30 ft</small>
+            </label>
+          </div>
+
+          <label class="form-group">
+            <span>Quantity (Nos)</span>
+            <input type="number" id="calcQuantity" min="1" max="100" value="1" required>
+            <small class="hint">1 to 100 items</small>
+          </label>
+
+          <button type="submit" id="addItemBtn" class="btn btn-secondary btn-block">➕ Add Item to Quote</button>
+        </form>
+      </div>
+
+      <!-- Quote Summary & Items List -->
+      <div class="card calc-summary-card">
+        <div class="summary-header">
+          <h3>Your Quote Items (<span id="itemCount">0</span>)</h3>
+          <button type="button" id="clearQuoteBtn" class="btn-text">Clear All</button>
+        </div>
+
+        <div id="emptyQuoteNotice" class="empty-state">
+          <p>No items added yet. Choose a product on the left and click "Add Item to Quote".</p>
+        </div>
+
+        <div id="quoteItemsTableWrapper" class="hidden">
+          <table class="styled-table mini-table">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Dimensions</th>
+                <th>Qty</th>
+                <th>Est. Line Total</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="quoteItemsBody"></tbody>
+            <tfoot>
+              <tr class="grand-total-row">
+                <th colspan="3">Grand Total (Server Calculated)</th>
+                <th colspan="2" id="grandTotalDisplay" class="grand-total-val">₹ 0</th>
+              </tr>
+            </tfoot>
+          </table>
+
+          <div id="calcStatusMsg" class="calc-msg"></div>
+
+          <!-- Quote submission form -->
+          <form id="saveQuoteForm" method="post" action="/quote/save" class="quote-save-box">
+            <input type="hidden" name="_csrf" value="<%= csrf %>">
+            <input type="hidden" name="items_json" id="quoteItemsJson" value="[]">
+
+            <h4><%= user ? 'Save Quote to Your Account' : 'Send Enquiry with this Quote' %></h4>
+            
+            <% if (!user) { %>
+              <div class="form-row">
+                <label class="form-group">
+                  <span>Your Full Name</span>
+                  <input type="text" name="name" maxlength="80" placeholder="e.g. Ramesh Kumar" required>
+                </label>
+                <label class="form-group">
+                  <span>Phone Number</span>
+                  <input type="tel" name="phone" maxlength="15" placeholder="e.g. 9876543210" required>
+                </label>
+              </div>
+            <% } else { %>
+              <p class="logged-info">Logged in as <strong><%= user.name %></strong>. This quote will be saved under your dashboard.</p>
+            <% } %>
+
+            <button type="submit" class="btn btn-primary btn-block">
+              <%= user ? '💾 Save Quote to Dashboard' : '📩 Submit Enquiry with Quote' %>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Direct Enquiry & Contact Section -->
+<section id="contact" class="section section-contact">
+  <div class="container">
+    <div class="contact-grid">
+      <!-- General Message Form -->
+      <div class="card contact-form-card">
+        <div class="section-header align-left">
+          <span class="section-tag">Direct Inquiry</span>
+          <h2>Have Questions? Send Us a Message</h2>
+          <p>We provide free on-site measurement and consultations.</p>
+        </div>
+
+        <% if (error) { %>
+          <div class="alert alert-error"><%= error %></div>
+        <% } %>
+        <% if (ok) { %>
+          <div class="alert alert-success"><%= ok %></div>
+        <% } %>
+
+        <form method="post" action="/enquiry" class="contact-form">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          
+          <div class="form-row">
+            <label class="form-group">
+              <span>Your Name</span>
+              <input type="text" name="name" value="<%= user ? user.name : '' %>" maxlength="80" required>
+            </label>
+            <label class="form-group">
+              <span>Phone Number</span>
+              <input type="tel" name="phone" maxlength="15" placeholder="10-digit number" required>
+            </label>
+          </div>
+
+          <label class="form-group">
+            <span>Requirement / Message</span>
+            <textarea name="message" maxlength="1000" rows="4" placeholder="Mention your requirements, window sizes, or installation location..." required></textarea>
+          </label>
+
+          <button type="submit" class="btn btn-primary btn-lg">Send Enquiry</button>
+        </form>
+      </div>
+
+      <!-- Business Details Contact Info -->
+      <div class="card contact-info-card">
+        <h3>Connect With Us</h3>
+        <p>Talk directly with the proprietor for customized solutions and best bulk rates.</p>
+        
+        <div class="contact-detail-block">
+          <div class="detail-icon">🏢</div>
+          <div>
+            <strong>Business Name</strong>
+            <p><%= biz.name %></p>
+          </div>
+        </div>
+
+        <div class="contact-detail-block">
+          <div class="detail-icon">👤</div>
+          <div>
+            <strong>Owner &amp; Fabricator</strong>
+            <p><%= biz.owner %> (<%= biz.years %> years experience)</p>
+          </div>
+        </div>
+
+        <div class="contact-detail-block">
+          <div class="detail-icon">📞</div>
+          <div>
+            <strong>Contact Number</strong>
+            <p><a href="tel:<%= biz.phone %>" class="phone-link"><%= biz.phone %></a></p>
+          </div>
+        </div>
+
+        <div class="contact-detail-block">
+          <div class="detail-icon">🛡️</div>
+          <div>
+            <strong>Quality Assurance</strong>
+            <p>10-Year Profile Warranty · German Hardware Options · UV Resistant</p>
+          </div>
+        </div>
+
+        <a href="tel:<%= biz.phone %>" class="btn btn-secondary btn-block">📞 Direct Call Now</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Client-side script for price calculator & server calculation synchronization -->
+<script>
+  (function() {
+    const productsData = <%- JSON.stringify(products) %>;
+    const csrfToken = "<%= csrf %>";
+
+    let quoteItems = [];
+
+    const productSelect = document.getElementById('calcProduct');
+    const dimFields = document.getElementById('dimFields');
+    const widthInput = document.getElementById('calcWidth');
+    const heightInput = document.getElementById('calcHeight');
+    const quantityInput = document.getElementById('calcQuantity');
+    const itemForm = document.getElementById('calcItemForm');
+
+    const emptyNotice = document.getElementById('emptyQuoteNotice');
+    const tableWrapper = document.getElementById('quoteItemsTableWrapper');
+    const itemsTbody = document.getElementById('quoteItemsBody');
+    const grandTotalDisplay = document.getElementById('grandTotalDisplay');
+    const itemCountSpan = document.getElementById('itemCount');
+    const itemsJsonInput = document.getElementById('quoteItemsJson');
+    const clearBtn = document.getElementById('clearQuoteBtn');
+    const statusMsg = document.getElementById('calcStatusMsg');
+
+    function updateDimVisibility() {
+      const selected = productSelect.options[productSelect.selectedIndex];
+      const type = selected.getAttribute('data-type');
+      if (type === 'piece') {
+        dimFields.style.display = 'none';
+        widthInput.removeAttribute('required');
+        heightInput.removeAttribute('required');
+      } else {
+        dimFields.style.display = 'grid';
+        widthInput.setAttribute('required', 'required');
+        heightInput.setAttribute('required', 'required');
+      }
+    }
+
+    productSelect.addEventListener('change', updateDimVisibility);
+    updateDimVisibility();
+
+    itemForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const pId = parseInt(productSelect.value, 10);
+      const prod = productsData.find(p => p.id === pId);
+      if (!prod) return;
+
+      const qty = parseInt(quantityInput.value, 10);
+      if (isNaN(qty) || qty < 1 || qty > 100) {
+        alert('Quantity must be between 1 and 100');
+        return;
+      }
+
+      let w = null, h = null;
+      if (prod.pricing_type === 'sqft') {
+        w = parseFloat(widthInput.value);
+        h = parseFloat(heightInput.value);
+        if (isNaN(w) || w < 0.5 || w > 30 || isNaN(h) || h < 0.5 || h > 30) {
+          alert('Width and Height must be numbers between 0.5 and 30 feet');
+          return;
+        }
+      }
+
+      quoteItems.push({
+        product_id: prod.id,
+        name: prod.name,
+        pricing_type: prod.pricing_type,
+        width: w,
+        height: h,
+        quantity: qty
+      });
+
+      renderAndSyncQuote();
+    });
+
+    clearBtn.addEventListener('click', function() {
+      quoteItems = [];
+      renderAndSyncQuote();
+    });
+
+    window.removeQuoteItem = function(index) {
+      quoteItems.splice(index, 1);
+      renderAndSyncQuote();
+    };
+
+    async function renderAndSyncQuote() {
+      itemCountSpan.textContent = quoteItems.length;
+      itemsJsonInput.value = JSON.stringify(quoteItems);
+
+      if (quoteItems.length === 0) {
+        emptyNotice.classList.remove('hidden');
+        tableWrapper.classList.add('hidden');
+        grandTotalDisplay.textContent = '₹ 0';
+        statusMsg.textContent = '';
+        return;
+      }
+
+      emptyNotice.classList.add('hidden');
+      tableWrapper.classList.remove('hidden');
+
+      // Request SERVER price calculation (Never trust client-side prices)
+      statusMsg.textContent = 'Calculating verified server totals...';
+      try {
+        const res = await fetch('/api/calculate-quote', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': csrfToken
+          },
+          body: JSON.stringify({
+            _csrf: csrfToken,
+            items: quoteItems
+          })
+        });
+
+        if (!res.ok) {
+          const errData = await res.json();
+          statusMsg.textContent = 'Error: ' + (errData.error || 'Failed to calculate quote on server');
+          return;
+        }
+
+        const data = await res.json();
+        statusMsg.textContent = '✓ Verified by server pricing engine';
+
+        itemsTbody.innerHTML = '';
+        data.items.forEach((item, idx) => {
+          const tr = document.createElement('tr');
+          const dimText = item.pricing_type === 'sqft' 
+            ? `${item.width} ft × ${item.height} ft (${(item.width * item.height).toFixed(2)} sq.ft)`
+            : 'Per piece';
+
+          tr.innerHTML = `
+            <td><strong>${item.name}</strong></td>
+            <td>${dimText}</td>
+            <td>${item.quantity}</td>
+            <td class="rate-cell">Rs. ${item.line_total.toLocaleString('en-IN')}</td>
+            <td><button type="button" class="btn-text-danger" onclick="removeQuoteItem(${idx})">✕ Remove</button></td>
+          `;
+          itemsTbody.appendChild(tr);
+        });
+
+        grandTotalDisplay.textContent = 'Rs. ' + data.total.toLocaleString('en-IN');
+      } catch (err) {
+        statusMsg.textContent = 'Network or server error while calculating prices.';
+      }
+    }
+  })();
+</script>
+
+<%- include('partials/foot') %>

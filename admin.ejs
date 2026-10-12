@@ -1,0 +1,203 @@
+<%- include('partials/head') %>
+
+<div class="container section">
+  <div class="dashboard-header">
+    <div>
+      <span class="section-tag">Restricted Access</span>
+      <h1>🛡️ Admin Dashboard</h1>
+      <p>Business Operations &amp; Security Administration for <%= biz.name %></p>
+    </div>
+    <div class="admin-badges">
+      <span class="badge">Role: Administrator</span>
+      <span class="badge badge-success">Session Active</span>
+    </div>
+  </div>
+
+  <% if (error) { %>
+    <div class="alert alert-error"><%= error %></div>
+  <% } %>
+  <% if (ok) { %>
+    <div class="alert alert-success"><%= ok %></div>
+  <% } %>
+
+  <!-- Product Rates Management -->
+  <div class="card mb-4">
+    <div class="card-header-flex">
+      <h2>1. Product Pricing &amp; Rates Management</h2>
+      <span class="hint">Updates affect instant calculator and quotes</span>
+    </div>
+    <div class="table-container">
+      <table class="styled-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Product Name</th>
+            <th>Pricing Method</th>
+            <th>Current Rate</th>
+            <th>Edit Rate (INR)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% products.forEach(p => { %>
+            <tr>
+              <td><%= p.id %></td>
+              <td><strong><%= p.name %></strong></td>
+              <td>
+                <span class="pricing-pill <%= p.pricing_type === 'sqft' ? 'pill-sqft' : 'pill-piece' %>">
+                  <%= p.pricing_type === 'sqft' ? 'per sq.ft' : 'per piece' %>
+                </span>
+              </td>
+              <td class="rate-cell">Rs. <%= p.rate %></td>
+              <td>
+                <form method="post" action="/admin/product/<%= p.id %>/rate" class="rate-edit-form">
+                  <input type="hidden" name="_csrf" value="<%= csrf %>">
+                  <input type="number" name="rate" step="1" min="1" max="100000" value="<%= p.rate %>" required class="input-sm">
+                  <button type="submit" class="btn btn-primary btn-sm">Update Rate</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Quotes Management -->
+  <div class="card mb-4">
+    <div class="card-header-flex">
+      <h2>2. Customer Quotes (<%= quotes.length %>)</h2>
+      <span class="hint">Includes line items and contact information</span>
+    </div>
+    <% if (quotes.length === 0) { %>
+      <p class="empty-state">No quotes generated yet.</p>
+    <% } else { %>
+      <div class="table-container">
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>Quote #</th>
+              <th>Customer Name</th>
+              <th>Phone</th>
+              <th>Account</th>
+              <th>Item Breakdown</th>
+              <th>Grand Total</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% quotes.forEach(q => { %>
+              <tr>
+                <td><strong>#Q-<%= q.id %></strong></td>
+                <td><%= q.name %></td>
+                <td><a href="tel:<%= q.phone %>"><%= q.phone %></a></td>
+                <td><%= q.user_email ? 'Registered: ' + q.user_email : 'Visitor' %></td>
+                <td>
+                  <ul class="item-breakdown-list">
+                    <% q.items.forEach(it => { %>
+                      <li>
+                        <strong><%= it.product_name %></strong>: 
+                        <% if (it.pricing_type === 'sqft') { %>
+                          <%= it.width %> ft × <%= it.height %> ft (<%= (it.width * it.height).toFixed(2) %> sq.ft) × <%= it.quantity %> qty = <strong>Rs. <%= it.line_total %></strong>
+                        <% } else { %>
+                          <%= it.quantity %> pc(s) @ Rs. <%= it.rate %> = <strong>Rs. <%= it.line_total %></strong>
+                        <% } %>
+                      </li>
+                    <% }) %>
+                  </ul>
+                </td>
+                <td class="rate-cell">Rs. <%= q.total.toLocaleString('en-IN') %></td>
+                <td><%= q.created_at %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Enquiries Management -->
+  <div class="card mb-4">
+    <div class="card-header-flex">
+      <h2>3. General Inquiries &amp; Status Workflow (<%= enquiries.length %>)</h2>
+      <span class="hint">Update statuses to New, In Progress, or Completed</span>
+    </div>
+    <% if (enquiries.length === 0) { %>
+      <p class="empty-state">No general enquiries received yet.</p>
+    <% } else { %>
+      <div class="table-container">
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Customer</th>
+              <th>Phone</th>
+              <th>Message</th>
+              <th>Status Workflow</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% enquiries.forEach(r => { %>
+              <tr>
+                <td>#E-<%= r.id %></td>
+                <td><strong><%= r.name %></strong> <%= r.user_email ? '(' + r.user_email + ')' : '' %></td>
+                <td><a href="tel:<%= r.phone %>"><%= r.phone %></a></td>
+                <td><%= r.message %></td>
+                <td>
+                  <form method="post" action="/admin/enquiry/<%= r.id %>/status" class="status-form">
+                    <input type="hidden" name="_csrf" value="<%= csrf %>">
+                    <select name="status" class="select-sm">
+                      <% ['New', 'In Progress', 'Completed'].forEach(s => { %>
+                        <option value="<%= s %>" <%= s === r.status ? 'selected' : '' %>><%= s %></option>
+                      <% }) %>
+                    </select>
+                    <button type="submit" class="btn btn-primary btn-sm">Save</button>
+                  </form>
+                </td>
+                <td><%= r.created_at %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Security Audit Logs -->
+  <div class="card">
+    <div class="card-header-flex">
+      <h2>4. Security Audit Log (Last 30 Events)</h2>
+      <span class="badge badge-warning">Immutable Audit Trail</span>
+    </div>
+    <div class="table-container">
+      <table class="styled-table mini-table">
+        <thead>
+          <tr>
+            <th>Log ID</th>
+            <th>Timestamp</th>
+            <th>User ID</th>
+            <th>Event / Action</th>
+            <th>Client IP</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% logs.forEach(l => { %>
+            <tr>
+              <td>#<%= l.id %></td>
+              <td><%= l.created_at %></td>
+              <td><%= l.user_id ? 'User #' + l.user_id : 'Guest / System' %></td>
+              <td>
+                <span class="log-action <%= l.action.includes('FAILED') || l.action.includes('DENIED') ? 'log-warn' : 'log-info' %>">
+                  <%= l.action %>
+                </span>
+              </td>
+              <td><code><%= l.ip || 'N/A' %></code></td>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/foot') %>

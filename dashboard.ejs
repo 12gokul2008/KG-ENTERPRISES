@@ -1,0 +1,117 @@
+<%- include('partials/head') %>
+
+<div class="container section">
+  <div class="dashboard-header">
+    <div>
+      <span class="section-tag">Customer Portal</span>
+      <h1>Welcome back, <%= user.name %>!</h1>
+      <p>Track your saved quotes, item specifications, and enquiry statuses in real time.</p>
+    </div>
+    <div>
+      <a href="/#calculator" class="btn btn-primary">➕ Create New Quote</a>
+    </div>
+  </div>
+
+  <% if (error) { %>
+    <div class="alert alert-error"><%= error %></div>
+  <% } %>
+  <% if (ok) { %>
+    <div class="alert alert-success"><%= ok %></div>
+  <% } %>
+
+  <!-- Saved Quotes Section -->
+  <div class="card mb-4">
+    <div class="card-header-flex">
+      <h2>My Saved Quotes (<%= quotes.length %>)</h2>
+      <span class="badge">Server Calculated</span>
+    </div>
+
+    <% if (quotes.length === 0) { %>
+      <div class="empty-state">
+        <p>You have not saved any price quotes yet.</p>
+        <a href="/#calculator" class="btn btn-outline btn-sm">Use Price Calculator</a>
+      </div>
+    <% } else { %>
+      <div class="table-container">
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>Quote #</th>
+              <th>Items &amp; Dimensions</th>
+              <th>Grand Total</th>
+              <th>Date Created</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% quotes.forEach(q => { %>
+              <tr>
+                <td><strong>#Q-<%= q.id %></strong></td>
+                <td>
+                  <ul class="item-breakdown-list">
+                    <% q.items.forEach(it => { %>
+                      <li>
+                        <strong><%= it.product_name %></strong>: 
+                        <% if (it.pricing_type === 'sqft') { %>
+                          <%= it.width %> ft × <%= it.height %> ft (<%= (it.width * it.height).toFixed(2) %> sq.ft) × <%= it.quantity %> qty = <strong>Rs. <%= it.line_total %></strong>
+                        <% } else { %>
+                          <%= it.quantity %> pc(s) @ Rs. <%= it.rate %> = <strong>Rs. <%= it.line_total %></strong>
+                        <% } %>
+                      </li>
+                    <% }) %>
+                  </ul>
+                </td>
+                <td class="rate-cell">Rs. <%= q.total.toLocaleString('en-IN') %></td>
+                <td><%= q.created_at %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </div>
+
+  <!-- Direct Enquiries Section -->
+  <div class="card">
+    <div class="card-header-flex">
+      <h2>My Inquiries &amp; Messages (<%= enquiries.length %>)</h2>
+    </div>
+
+    <% if (enquiries.length === 0) { %>
+      <div class="empty-state">
+        <p>No contact inquiries submitted yet.</p>
+        <a href="/#contact" class="btn btn-outline btn-sm">Send a Message</a>
+      </div>
+    <% } else { %>
+      <div class="table-container">
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Phone</th>
+              <th>Message / Requirements</th>
+              <th>Status</th>
+              <th>Date Submitted</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% enquiries.forEach(e => { %>
+              <tr>
+                <td>#E-<%= e.id %></td>
+                <td><%= e.phone %></td>
+                <td><%= e.message %></td>
+                <td>
+                  <span class="status-pill status-<%= e.status.toLowerCase().replace(/\s+/g, '-') %>">
+                    <%= e.status %>
+                  </span>
+                </td>
+                <td><%= e.created_at %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<%- include('partials/foot') %>

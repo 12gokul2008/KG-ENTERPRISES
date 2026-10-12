@@ -1,0 +1,41 @@
+<%- include('partials/head') %>
+
+<div class="container section">
+  <div class="auth-box card auth-box-admin">
+    <div class="auth-box-header">
+      <span class="auth-icon">🛡️</span>
+      <h2>Administrator Login</h2>
+      <p>Authorized personnel and owner management console</p>
+    </div>
+
+    <% if (error) { %>
+      <div class="alert alert-error"><%= error %></div>
+    <% } %>
+    <% if (ok) { %>
+      <div class="alert alert-success"><%= ok %></div>
+    <% } %>
+
+    <form method="post" action="/admin/login" class="auth-form">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      
+      <label class="form-group">
+        <span>Admin Email</span>
+        <input type="email" name="email" maxlength="254" required autocomplete="username" placeholder="admin@domain.com">
+      </label>
+
+      <label class="form-group">
+        <span>Password</span>
+        <input type="password" name="password" maxlength="128" required autocomplete="current-password" placeholder="Admin password">
+      </label>
+
+      <button type="submit" class="btn btn-secondary btn-block btn-lg">Authenticate as Admin</button>
+    </form>
+
+    <div class="auth-footer-links">
+      <p class="admin-notice">⚠️ Note: Admin accounts are provisioned via server CLI script (<code>create-admin.js</code>) only.</p>
+      <p><a href="/choose">← Back to role selection</a></p>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/foot') %>

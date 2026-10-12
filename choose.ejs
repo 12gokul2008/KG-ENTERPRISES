@@ -1,0 +1,33 @@
+<%- include('partials/head') %>
+
+<div class="container section">
+  <div class="auth-center-wrapper">
+    <div class="section-header">
+      <span class="section-tag">Authentication Portal</span>
+      <h1>Select Account Type</h1>
+      <p>Choose your role to access customized dashboards and controls</p>
+    </div>
+
+    <div class="role-grid">
+      <a class="role-card" href="/login">
+        <div class="role-icon">👤</div>
+        <h2>Customer Portal</h2>
+        <p>Access your saved UPVC window quotes, track enquiries, and get direct manufacturer assistance.</p>
+        <span class="btn btn-outline btn-block">Customer Login</span>
+      </a>
+
+      <a class="role-card" href="/admin/login">
+        <div class="role-icon">🛡️</div>
+        <h2>Admin Management</h2>
+        <p>Manage product rates, view all incoming inquiries and quotes, change statuses, and review security logs.</p>
+        <span class="btn btn-primary btn-block">Admin Login</span>
+      </a>
+    </div>
+
+    <div class="auth-sub-note">
+      <p>New customer? <a href="/register">Register a new customer account here</a>.</p>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/foot') %>

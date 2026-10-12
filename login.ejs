@@ -1,0 +1,41 @@
+<%- include('partials/head') %>
+
+<div class="container section">
+  <div class="auth-box card">
+    <div class="auth-box-header">
+      <span class="auth-icon">👤</span>
+      <h2>Customer Login</h2>
+      <p>Log in to view your quotes and track request status</p>
+    </div>
+
+    <% if (error) { %>
+      <div class="alert alert-error"><%= error %></div>
+    <% } %>
+    <% if (ok) { %>
+      <div class="alert alert-success"><%= ok %></div>
+    <% } %>
+
+    <form method="post" action="/login" class="auth-form">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      
+      <label class="form-group">
+        <span>Email Address</span>
+        <input type="email" name="email" maxlength="254" required autocomplete="username" placeholder="name@example.com">
+      </label>
+
+      <label class="form-group">
+        <span>Password</span>
+        <input type="password" name="password" maxlength="128" required autocomplete="current-password" placeholder="Enter your password">
+      </label>
+
+      <button type="submit" class="btn btn-primary btn-block btn-lg">Log In as Customer</button>
+    </form>
+
+    <div class="auth-footer-links">
+      <p>Don't have an account yet? <a href="/register">Register here</a></p>
+      <p><a href="/choose">← Back to role selection</a></p>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/foot') %>

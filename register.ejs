@@ -1,0 +1,44 @@
+<%- include('partials/head') %>
+
+<div class="container section">
+  <div class="auth-box card">
+    <div class="auth-box-header">
+      <span class="auth-icon">📝</span>
+      <h2>Create Customer Account</h2>
+      <p>Save multiple quotes and track custom UPVC window inquiries</p>
+    </div>
+
+    <% if (error) { %>
+      <div class="alert alert-error"><%= error %></div>
+    <% } %>
+
+    <form method="post" action="/register" class="auth-form">
+      <input type="hidden" name="_csrf" value="<%= csrf %>">
+      
+      <label class="form-group">
+        <span>Your Full Name</span>
+        <input type="text" name="name" maxlength="80" required placeholder="e.g. Ramesh Kumar">
+      </label>
+
+      <label class="form-group">
+        <span>Email Address</span>
+        <input type="email" name="email" maxlength="254" required autocomplete="username" placeholder="name@example.com">
+      </label>
+
+      <label class="form-group">
+        <span>Create Password</span>
+        <input type="password" name="password" maxlength="128" required autocomplete="new-password" placeholder="At least 10 characters">
+        <small class="hint">Minimum 10 characters with upper-case, lower-case, and a number</small>
+      </label>
+
+      <button type="submit" class="btn btn-primary btn-block btn-lg">Complete Registration</button>
+    </form>
+
+    <div class="auth-footer-links">
+      <p>Already have an account? <a href="/login">Log in here</a></p>
+      <p><a href="/choose">← Back to role selection</a></p>
+    </div>
+  </div>
+</div>
+
+<%- include('partials/foot') %>
